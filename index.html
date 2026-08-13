@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Çelik Group | Kurumsal</title>
     <style>
-        /* TEMEL AYARLAR */
+        /* TEMEL AYARLAR - YEŞİL TEMA */
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #f39c12;
-            --bg-color: #f8f9fa;
+            --primary-color: #1e5128; /* Koyu Kurumsal Yeşil */
+            --secondary-color: #4caf50; /* Canlı Yeşil */
+            --bg-color: #f4f9f4;
             --text-color: #333;
         }
 
@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow: hidden; /* Giriş bitene kadar kaydırmayı kapat */
+            overflow: hidden; /* Animasyon bitene kadar kaydırmayı engelle */
         }
 
         /* ----- GİRİŞ (INTRO) EKRANI ----- */
@@ -39,67 +39,69 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 1s ease-out;
-            perspective: 1200px;
+            perspective: 1000px;
         }
 
-        /* Resmin oluşacağı merkez alan */
+        /* Merkezdeki Animasyon Alanı */
         #image-container {
             position: relative;
-            width: 300px;
-            height: 400px;
             z-index: 2;
+            /* Genişlik ve yükseklik JS tarafından mobil uyumlu olarak atanacak */
         }
 
-        /* Resmin Parçaları (Evin yapı taşları) */
+        /* Binayı Oluşturan Parçalar */
         .fragment {
             position: absolute;
             background-image: url('image_5dfd1c.jpg');
-            background-size: 300px 400px;
+            background-color: #2e7d32; /* RESİM YÜKLENMEZSE DİREKT YEŞİL BLOK OLARAK ÇALIŞIR */
+            background-blend-mode: multiply; /* Resme yeşil hologram efekti verir */
+            background-size: var(--bg-w) var(--bg-h);
             background-repeat: no-repeat;
             
-            /* Başlangıçta görünmez ve dağınık */
+            /* Başlangıçta Görünmez ve Dağınık */
             transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(0);
             opacity: 0;
             transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
         }
 
-        /* Bina Kurulduğunda */
+        /* Bina Kurulma Anı */
         .fragment.built {
             transform: translate(0, 0) rotate(0deg) scale(1);
             opacity: 1;
         }
 
-        /* Bina Yıkıldığında */
+        /* Bina Yıkılma Anı */
         .fragment.collapsed {
             transform: translate(var(--end-x), var(--end-y)) rotate(var(--end-rot));
             opacity: 0;
             transition: transform 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.8s ease;
         }
 
-        /* ÇELİK GROUP YAZISI (Arkadaki net metin) */
+        /* ÇELİK GROUP YAZISI (Yeşil Tema) */
         #intro-text {
             position: absolute;
-            z-index: 1; /* Binanın arkasında kalsın */
-            font-size: clamp(3rem, 8vw, 5rem);
+            z-index: 1;
+            font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 900;
             color: var(--primary-color);
             text-align: center;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             opacity: 0;
             transform: scale(0.3);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0px 10px 20px rgba(0,0,0,0.1);
+            text-shadow: 0px 5px 15px rgba(30, 81, 40, 0.2);
+            width: 100%;
+            padding: 0 10px;
         }
 
         #intro-text span {
             color: var(--secondary-color);
         }
 
-        /* Yazı ortaya çıktığında */
         #intro-text.show {
             opacity: 1;
             transform: scale(1);
-            z-index: 3; /* Yıkıntıların üstüne çıksın */
+            z-index: 3;
         }
 
         /* ----- ANA İÇERİK ----- */
@@ -111,8 +113,8 @@
 
         header {
             background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px 5%;
+            border-bottom: 3px solid var(--secondary-color);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -122,7 +124,7 @@
         }
 
         .logo {
-            font-size: clamp(20px, 4vw, 28px);
+            font-size: clamp(20px, 5vw, 28px);
             font-weight: 900;
             color: var(--primary-color);
             display: flex;
@@ -135,14 +137,14 @@
         }
 
         .hero {
-            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80') center/cover;
+            background: linear-gradient(rgba(30, 81, 40, 0.85), rgba(30, 81, 40, 0.85)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80') center/cover;
             color: white;
             text-align: center;
             padding: 80px 20px;
         }
 
         .hero h1 {
-            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
             margin-bottom: 20px;
         }
 
@@ -154,22 +156,25 @@
         .project-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 30px;
+            gap: 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
+        /* Tablet ve Masaüstü için */
         @media (min-width: 768px) {
             .project-grid {
                 grid-template-columns: 1fr 1fr;
+                gap: 30px;
             }
         }
 
         .project-card {
             background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 30px;
+            border-radius: 8px;
+            border-top: 4px solid var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 25px;
         }
 
         footer {
@@ -192,32 +197,31 @@
 
     <!-- 2. ANA SİTE İÇERİĞİ -->
     <div id="main-content">
-        
         <header>
             <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#f39c12"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-8.5-9L2 6v2h19V6l-5.5-5z"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4caf50"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-8.5-9L2 6v2h19V6l-5.5-5z"/></svg>
                 ÇELİK <span>GROUP</span>
             </div>
-            <div>Projelerimiz</div>
+            <div style="font-size: clamp(12px, 3vw, 16px); color: #1e5128; font-weight: bold;">Projelerimiz</div>
         </header>
 
         <section class="hero">
             <h1>Yeni Hayatınız Burada Sizi Bekliyor!</h1>
-            <p>Konya'da modern, güvenilir ve oturuma hazır yaşam alanları inşa ediyoruz.</p>
+            <p>Konya'da doğayla iç içe, modern ve güvenilir yaşam alanları inşa ediyoruz.</p>
         </section>
 
         <section class="projects-section">
-            <h2 style="color: #2c3e50; font-size: 2rem; margin-bottom: 30px;">Öne Çıkan Projelerimiz</h2>
+            <h2 style="color: #1e5128; font-size: clamp(1.8rem, 5vw, 2.2rem); margin-bottom: 30px;">Öne Çıkan Projelerimiz</h2>
             <div class="project-grid">
                 <div class="project-card">
-                    <h3 style="color: #f39c12; margin-top:0;">3+1 Daireler</h3>
+                    <h3 style="color: #4caf50; margin-top:0;">3+1 Daireler</h3>
                     <p>Geniş aileler için ferah, modern tasarımlı ve konforlu yaşam alanları.</p>
-                    <p><strong>Durum:</strong> Hemen Teslim</p>
+                    <p style="color: #1e5128;"><strong>Durum:</strong> Hemen Teslim</p>
                 </div>
                 <div class="project-card">
-                    <h3 style="color: #f39c12; margin-top:0;">2+1 Daireler</h3>
+                    <h3 style="color: #4caf50; margin-top:0;">2+1 Daireler</h3>
                     <p>Ergonomik mimarisiyle dikkat çeken, şehre yakın lüks daire seçenekleri.</p>
-                    <p><strong>Durum:</strong> Hemen Teslim</p>
+                    <p style="color: #1e5128;"><strong>Durum:</strong> Hemen Teslim</p>
                 </div>
             </div>
         </section>
@@ -225,10 +229,9 @@
         <footer>
             <p>© 2026 Çelik Group. Tüm hakları saklıdır.</p>
         </footer>
-
     </div>
 
-    <!-- 3. JAVASCRIPT ANIMASYON KONTROLLERİ -->
+    <!-- 3. JAVASCRIPT: MOBİL UYUMLU YEŞİL ANİMASYON -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('image-container');
@@ -236,11 +239,16 @@
             const introText = document.getElementById('intro-text');
             const mainContent = document.getElementById('main-content');
             
-            // Resmi 10x15 şeklinde 150 parçaya bölüyoruz
+            // Ekran genişliğine göre boyut hesapla (Mobil Uyum)
+            const isMobile = window.innerWidth < 600;
+            const containerWidth = isMobile ? 240 : 300;
+            const containerHeight = isMobile ? 320 : 400;
+            
+            container.style.width = containerWidth + 'px';
+            container.style.height = containerHeight + 'px';
+
             const cols = 10; 
             const rows = 15;
-            const containerWidth = 300;
-            const containerHeight = 400;
             const fragWidth = containerWidth / cols;
             const fragHeight = containerHeight / rows;
 
@@ -250,18 +258,23 @@
                 for (let j = 0; j < cols; j++) {
                     const frag = document.createElement('div');
                     frag.classList.add('fragment');
+                    
                     frag.style.width = fragWidth + 'px';
                     frag.style.height = fragHeight + 'px';
                     frag.style.left = (j * fragWidth) + 'px';
                     frag.style.top = (i * fragHeight) + 'px';
+                    
+                    // Resim tam otursun diye CSS değişkenlerine boyutları gönderiyoruz
+                    frag.style.setProperty('--bg-w', containerWidth + 'px');
+                    frag.style.setProperty('--bg-h', containerHeight + 'px');
                     frag.style.backgroundPosition = `-${j * fragWidth}px -${i * fragHeight}px`;
 
-                    // Başlangıç Pozisyonu (Dışarıdan Uçarak Gelme)
+                    // Başlangıç (Uçarak gelme)
                     const startX = (Math.random() - 0.5) * (window.innerWidth * 1.5);
                     const startY = (Math.random() - 0.5) * (window.innerHeight * 1.5);
                     const startRot = (Math.random() - 0.5) * 720;
 
-                    // Bitiş Pozisyonu (Yıkılıp Aşağı Dökülme - Yer çekimi etkisi)
+                    // Bitiş (Aşağı dökülme)
                     const endX = (Math.random() - 0.5) * (window.innerWidth);
                     const endY = (Math.random() * (window.innerHeight / 2)) + 300; 
                     const endRot = (Math.random() - 0.5) * 360;
@@ -279,14 +292,14 @@
                 }
             }
 
-            // ---- ZAMANLAMA SENARYOSU (Toplam 6 Saniye) ---- //
+            // ---- ZAMANLAMA SENARYOSU (6 Saniye) ---- //
 
-            // 1. Aşama: 100ms sonra parçalar uçarak evi (binayı) kursun
+            // 1. Binanın Kurulması (Yeşil bloklar/resim parçaları birleşir)
             setTimeout(() => {
                 fragments.forEach(f => f.classList.add('built'));
             }, 100);
 
-            // 2. Aşama: 2.5 Saniye sonra bina yıkılıp aşağı dökülsün
+            // 2. Binanın Yıkılması (Aşağı dökülürler)
             setTimeout(() => {
                 fragments.forEach(f => {
                     f.classList.remove('built');
@@ -294,27 +307,25 @@
                 });
             }, 2500);
 
-            // 3. Aşama: Bina dökülmeye başladığı an arkadaki ÇELİK GROUP yazısı patlayarak çıksın
+            // 3. Yazının Çıkması
             setTimeout(() => {
                 introText.classList.add('show');
             }, 2700);
 
-            // 4. Aşama: 5.0 Saniye sonra beyaz ekran kararmaya/şeffaflaşmaya başlasın
+            // 4. Ekranın kararmaya/şeffaflaşmaya başlaması
             setTimeout(() => {
                 introScreen.style.opacity = '0';
             }, 5000);
 
-            // 5. Aşama: 6.0 Saniye dolduğunda giriş ekranı kaybolup mobil uyumlu site gelsin
+            // 5. Ana siteye geçiş
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 mainContent.style.display = 'block';
-                document.body.style.overflow = 'auto'; // Kaydırmayı tekrar aç
+                document.body.style.overflow = 'auto'; 
                 
-                // Asıl sitenin yavaşça belirmesi
                 setTimeout(() => {
                     mainContent.style.opacity = '1';
                 }, 50);
-
             }, 6000);
         });
     </script>
