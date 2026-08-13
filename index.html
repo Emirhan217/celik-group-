@@ -5,21 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Çelik Group | Kurumsal</title>
     <style>
-        /* TEMEL AYARLAR - YEŞİL TEMA */
+        /* TEMA DEĞİŞKENLERİ (Açık ve Karanlık Mod İçin) */
         :root {
-            --primary-color: #1e5128; /* Koyu Kurumsal Yeşil */
-            --secondary-color: #4caf50; /* Canlı Yeşil */
-            --bg-color: #f4f9f4;
-            --text-color: #333;
+            /* Yeşil Konsept Renkleri */
+            --primary-color: #1e5128;
+            --secondary-color: #4caf50;
+            
+            /* Gündüz (Sade) Mod Renkleri */
+            --bg-color: #f8fff9;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --border-color: #e0ebe0;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* Karanlık Mod Renkleri */
+        body.dark-mode {
+            --bg-color: #121a14;
+            --text-color: #e0e0e0;
+            --card-bg: #1e2b21;
+            --header-bg: rgba(18, 26, 20, 0.9);
+            --border-color: #2a3d2e;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -29,11 +47,9 @@
         /* ----- GİRİŞ (INTRO) EKRANI ----- */
         #intro-screen {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #ffffff;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-color: var(--bg-color);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -42,42 +58,71 @@
             perspective: 1000px;
         }
 
-        /* Merkezdeki Animasyon Alanı */
-        #image-container {
+        /* CSS İLE ÇİZİLMİŞ EV (Garantili Çalışır) */
+        #css-house {
             position: relative;
+            width: 200px;
+            height: 200px;
             z-index: 2;
-            /* Genişlik ve yükseklik JS tarafından mobil uyumlu olarak atanacak */
         }
 
-        /* Binayı Oluşturan Parçalar */
-        .fragment {
+        .house-part {
             position: absolute;
-            background-image: url('image_5dfd1c.jpg');
-            background-color: #2e7d32; /* RESİM YÜKLENMEZSE DİREKT YEŞİL BLOK OLARAK ÇALIŞIR */
-            background-blend-mode: multiply; /* Resme yeşil hologram efekti verir */
-            background-size: var(--bg-w) var(--bg-h);
-            background-repeat: no-repeat;
-            
-            /* Başlangıçta Görünmez ve Dağınık */
+            /* Başlangıçta rastgele dağılmış ve görünmez */
             transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(0);
             opacity: 0;
             transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
         }
 
-        /* Bina Kurulma Anı */
-        .fragment.built {
+        /* Ev Kurulduğunda */
+        .house-part.built {
             transform: translate(0, 0) rotate(0deg) scale(1);
             opacity: 1;
         }
 
-        /* Bina Yıkılma Anı */
-        .fragment.collapsed {
+        /* Ev Yıkıldığında */
+        .house-part.collapsed {
             transform: translate(var(--end-x), var(--end-y)) rotate(var(--end-rot));
             opacity: 0;
             transition: transform 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.8s ease;
         }
 
-        /* ÇELİK GROUP YAZISI (Yeşil Tema) */
+        /* Evin Parçalarının Tasarımları */
+        .roof {
+            top: 20px; left: -25px;
+            width: 0; height: 0;
+            border-left: 125px solid transparent;
+            border-right: 125px solid transparent;
+            border-bottom: 80px solid var(--primary-color);
+        }
+        .chimney {
+            top: 0px; left: 120px;
+            width: 30px; height: 60px;
+            background-color: #8b3a3a;
+            border-radius: 3px;
+        }
+        .wall {
+            top: 100px; left: 0;
+            width: 200px; height: 100px;
+            background-color: var(--secondary-color);
+            border-radius: 4px;
+        }
+        .window {
+            width: 40px; height: 40px;
+            background-color: #e0f2f1;
+            border: 4px solid var(--primary-color);
+            border-radius: 6px;
+        }
+        .win1 { top: 120px; left: 20px; }
+        .win2 { top: 120px; left: 140px; }
+        .door {
+            top: 130px; left: 80px;
+            width: 40px; height: 70px;
+            background-color: var(--primary-color);
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* ÇELİK GROUP YAZISI */
         #intro-text {
             position: absolute;
             z-index: 1;
@@ -89,9 +134,7 @@
             opacity: 0;
             transform: scale(0.3);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0px 5px 15px rgba(30, 81, 40, 0.2);
             width: 100%;
-            padding: 0 10px;
         }
 
         #intro-text span {
@@ -104,16 +147,18 @@
             z-index: 3;
         }
 
-        /* ----- ANA İÇERİK ----- */
+        /* ----- ANA SİTE TASARIMI ----- */
         #main-content {
             display: none;
             opacity: 0;
             transition: opacity 1s ease-in;
         }
 
+        /* Header & Tema Butonu */
         header {
-            background-color: #fff;
-            border-bottom: 3px solid var(--secondary-color);
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
             padding: 15px 5%;
             display: flex;
             justify-content: space-between;
@@ -124,104 +169,175 @@
         }
 
         .logo {
-            font-size: clamp(20px, 5vw, 28px);
+            font-size: clamp(18px, 4vw, 24px);
             font-weight: 900;
             color: var(--primary-color);
             display: flex;
             align-items: center;
             gap: 10px;
         }
+        .logo span { color: var(--secondary-color); }
 
-        .logo span {
-            color: var(--secondary-color);
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .theme-toggle:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Hero (Vitrin) Bölümü - Kendi Resminiz Kullanıldı */
         .hero {
-            background: linear-gradient(rgba(30, 81, 40, 0.85), rgba(30, 81, 40, 0.85)), url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80') center/cover;
+            /* Sizin gönderdiğiniz resmi arkaplan yaptık */
+            background: linear-gradient(rgba(18, 26, 20, 0.7), rgba(18, 26, 20, 0.8)), url('image_5dfd1c.jpg') center/cover no-repeat;
             color: white;
             text-align: center;
-            padding: 80px 20px;
+            padding: 120px 20px;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .hero h1 {
-            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            font-size: clamp(2rem, 6vw, 3.5rem);
             margin-bottom: 20px;
+            font-weight: 900;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            max-width: 600px;
+            color: #e0e0e0;
         }
 
+        /* Projeler Bölümü */
         .projects-section {
-            padding: 60px 5%;
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 40px;
             text-align: center;
         }
 
         .project-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
+            gap: 30px;
         }
 
-        /* Tablet ve Masaüstü için */
         @media (min-width: 768px) {
-            .project-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-            }
+            .project-grid { grid-template-columns: 1fr 1fr; }
         }
 
         .project-card {
-            background: #fff;
-            border-radius: 8px;
-            border-top: 4px solid var(--secondary-color);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 40px 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 5px;
+            background-color: var(--secondary-color);
+        }
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.15);
+        }
+        .project-card h3 {
+            color: var(--secondary-color);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
         }
 
         footer {
             background-color: var(--primary-color);
-            color: white;
+            color: rgba(255,255,255,0.8);
             text-align: center;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 30px 20px;
             font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. GİRİŞ (INTRO) EKRANI -->
+    <!-- 1. GİRİŞ (INTRO) EKRANI (CSS Ev Animasyonu) -->
     <div id="intro-screen">
         <div id="intro-text">ÇELİK <span>GROUP</span></div>
-        <div id="image-container"></div>
+        <div id="css-house">
+            <div class="house-part chimney"></div>
+            <div class="house-part roof"></div>
+            <div class="house-part wall"></div>
+            <div class="house-part window win1"></div>
+            <div class="house-part window win2"></div>
+            <div class="house-part door"></div>
+        </div>
     </div>
 
     <!-- 2. ANA SİTE İÇERİĞİ -->
     <div id="main-content">
         <header>
             <div class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#4caf50"><path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-8.5-9L2 6v2h19V6l-5.5-5z"/></svg>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--secondary-color)">
+                    <path d="M4 10v7h3v-7H4zm6 0v7h3v-7h-3zM2 22h19v-3H2v3zm14-12v7h3v-7h-3zm-8.5-9L2 6v2h19V6l-5.5-5z"/>
+                </svg>
                 ÇELİK <span>GROUP</span>
             </div>
-            <div style="font-size: clamp(12px, 3vw, 16px); color: #1e5128; font-weight: bold;">Projelerimiz</div>
+            <div class="header-controls">
+                <div style="font-size: 14px; font-weight: bold;">Projelerimiz</div>
+                <!-- TEMA DEĞİŞTİRME BUTONU -->
+                <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">
+                    <span id="theme-icon">🌙</span> Mod
+                </button>
+            </div>
         </header>
 
         <section class="hero">
-            <h1>Yeni Hayatınız Burada Sizi Bekliyor!</h1>
-            <p>Konya'da doğayla iç içe, modern ve güvenilir yaşam alanları inşa ediyoruz.</p>
+            <h1>Yeni Hayatınız Burada<br>Sizi Bekliyor</h1>
+            <p>Konya'da modern mimariyi ve güvenli yaşamı bir araya getiren prestijli dairelerimizi keşfedin.</p>
         </section>
 
         <section class="projects-section">
-            <h2 style="color: #1e5128; font-size: clamp(1.8rem, 5vw, 2.2rem); margin-bottom: 30px;">Öne Çıkan Projelerimiz</h2>
+            <h2 class="section-title">Öne Çıkan Projelerimiz</h2>
             <div class="project-grid">
                 <div class="project-card">
-                    <h3 style="color: #4caf50; margin-top:0;">3+1 Daireler</h3>
-                    <p>Geniş aileler için ferah, modern tasarımlı ve konforlu yaşam alanları.</p>
-                    <p style="color: #1e5128;"><strong>Durum:</strong> Hemen Teslim</p>
+                    <h3>3+1 Daireler</h3>
+                    <p style="margin-bottom: 20px; line-height: 1.6;">Geniş aileler için tasarlanmış, ferah ve modern mimariye sahip lüks yaşam alanları.</p>
+                    <p style="color: var(--primary-color); font-weight: bold; padding-top: 15px; border-top: 1px solid var(--border-color);">Durum: Hemen Teslim</p>
                 </div>
                 <div class="project-card">
-                    <h3 style="color: #4caf50; margin-top:0;">2+1 Daireler</h3>
-                    <p>Ergonomik mimarisiyle dikkat çeken, şehre yakın lüks daire seçenekleri.</p>
-                    <p style="color: #1e5128;"><strong>Durum:</strong> Hemen Teslim</p>
+                    <h3>2+1 Daireler</h3>
+                    <p style="margin-bottom: 20px; line-height: 1.6;">Şehrin tam merkezinde, ergonomik ve kompakt tasarımıyla dikkat çeken daire seçenekleri.</p>
+                    <p style="color: var(--primary-color); font-weight: bold; padding-top: 15px; border-top: 1px solid var(--border-color);">Durum: Hemen Teslim</p>
                 </div>
             </div>
         </section>
@@ -231,97 +347,70 @@
         </footer>
     </div>
 
-    <!-- 3. JAVASCRIPT: MOBİL UYUMLU YEŞİL ANİMASYON -->
+    <!-- 3. JAVASCRIPT: ANİMASYON VE TEMA KONTROLÜ -->
     <script>
+        // --- TEMA (DARK/LIGHT MODE) KONTROLÜ ---
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            
+            body.classList.toggle('dark-mode');
+            
+            if(body.classList.contains('dark-mode')) {
+                icon.textContent = '☀️'; // Karanlıktayken Güneş ikonunu göster
+            } else {
+                icon.textContent = '🌙'; // Aydınlıktayken Ay ikonunu göster
+            }
+        }
+
+        // --- EV ANİMASYONU KONTROLÜ ---
         document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('image-container');
+            const parts = document.querySelectorAll('.house-part');
             const introScreen = document.getElementById('intro-screen');
             const introText = document.getElementById('intro-text');
             const mainContent = document.getElementById('main-content');
             
-            // Ekran genişliğine göre boyut hesapla (Mobil Uyum)
-            const isMobile = window.innerWidth < 600;
-            const containerWidth = isMobile ? 240 : 300;
-            const containerHeight = isMobile ? 320 : 400;
-            
-            container.style.width = containerWidth + 'px';
-            container.style.height = containerHeight + 'px';
+            // Her parça için rastgele başlangıç (uçarak gelme) ve bitiş (yıkılma) koordinatları belirle
+            parts.forEach(part => {
+                // Başlangıç (Ekranın dışından rastgele)
+                part.style.setProperty('--start-x', (Math.random() - 0.5) * 200 + 'vw');
+                part.style.setProperty('--start-y', (Math.random() - 0.5) * 200 + 'vh');
+                part.style.setProperty('--start-rot', (Math.random() - 0.5) * 720 + 'deg');
+                
+                // Bitiş (Aşağıya doğru dökülme/yerçekimi)
+                part.style.setProperty('--end-x', (Math.random() - 0.5) * 100 + 'vw');
+                part.style.setProperty('--end-y', (Math.random() * 50 + 50) + 'vh');
+                part.style.setProperty('--end-rot', (Math.random() - 0.5) * 360 + 'deg');
+            });
 
-            const cols = 10; 
-            const rows = 15;
-            const fragWidth = containerWidth / cols;
-            const fragHeight = containerHeight / rows;
-
-            const fragments = [];
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    const frag = document.createElement('div');
-                    frag.classList.add('fragment');
-                    
-                    frag.style.width = fragWidth + 'px';
-                    frag.style.height = fragHeight + 'px';
-                    frag.style.left = (j * fragWidth) + 'px';
-                    frag.style.top = (i * fragHeight) + 'px';
-                    
-                    // Resim tam otursun diye CSS değişkenlerine boyutları gönderiyoruz
-                    frag.style.setProperty('--bg-w', containerWidth + 'px');
-                    frag.style.setProperty('--bg-h', containerHeight + 'px');
-                    frag.style.backgroundPosition = `-${j * fragWidth}px -${i * fragHeight}px`;
-
-                    // Başlangıç (Uçarak gelme)
-                    const startX = (Math.random() - 0.5) * (window.innerWidth * 1.5);
-                    const startY = (Math.random() - 0.5) * (window.innerHeight * 1.5);
-                    const startRot = (Math.random() - 0.5) * 720;
-
-                    // Bitiş (Aşağı dökülme)
-                    const endX = (Math.random() - 0.5) * (window.innerWidth);
-                    const endY = (Math.random() * (window.innerHeight / 2)) + 300; 
-                    const endRot = (Math.random() - 0.5) * 360;
-                    
-                    frag.style.setProperty('--start-x', `${startX}px`);
-                    frag.style.setProperty('--start-y', `${startY}px`);
-                    frag.style.setProperty('--start-rot', `${startRot}deg`);
-                    
-                    frag.style.setProperty('--end-x', `${endX}px`);
-                    frag.style.setProperty('--end-y', `${endY}px`);
-                    frag.style.setProperty('--end-rot', `${endRot}deg`);
-
-                    container.appendChild(frag);
-                    fragments.push(frag);
-                }
-            }
-
-            // ---- ZAMANLAMA SENARYOSU (6 Saniye) ---- //
-
-            // 1. Binanın Kurulması (Yeşil bloklar/resim parçaları birleşir)
+            // 1. Aşama: Sayfa açılır açılmaz ev parçaları merkeze toplanıp evi kursun
             setTimeout(() => {
-                fragments.forEach(f => f.classList.add('built'));
+                parts.forEach(p => p.classList.add('built'));
             }, 100);
 
-            // 2. Binanın Yıkılması (Aşağı dökülürler)
+            // 2. Aşama: 2.5 Saniye sonra kurulan ev yıkılıp aşağı dökülsün
             setTimeout(() => {
-                fragments.forEach(f => {
-                    f.classList.remove('built');
-                    f.classList.add('collapsed');
+                parts.forEach(p => {
+                    p.classList.remove('built');
+                    p.classList.add('collapsed');
                 });
             }, 2500);
 
-            // 3. Yazının Çıkması
+            // 3. Aşama: Ev yıkılırken arkasındaki ÇELİK GROUP yazısı belirtsin
             setTimeout(() => {
                 introText.classList.add('show');
             }, 2700);
 
-            // 4. Ekranın kararmaya/şeffaflaşmaya başlaması
+            // 4. Aşama: 5.0 Saniye sonra giriş ekranı şeffaflaşsın
             setTimeout(() => {
                 introScreen.style.opacity = '0';
             }, 5000);
 
-            // 5. Ana siteye geçiş
+            // 5. Aşama: 6.0 Saniye dolduğunda ana site gelsin
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 mainContent.style.display = 'block';
-                document.body.style.overflow = 'auto'; 
+                document.body.style.overflow = 'auto'; // Kaydırmayı aktifleştir
                 
                 setTimeout(() => {
                     mainContent.style.opacity = '1';
