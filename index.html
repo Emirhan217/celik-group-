@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            overflow-x: hidden;
+            overflow: hidden; /* Giriş ekranı bitene kadar kaydırmayı engelle */
         }
 
         /* ----- GİRİŞ (INTRO) EKRANI ----- */
@@ -39,19 +39,22 @@
             align-items: center;
             z-index: 9999;
             transition: opacity 1s ease-out;
-            overflow: hidden;
             perspective: 1000px;
         }
 
         /* Resmin oluşacağı merkez kapsayıcı */
         #image-container {
-            position: relative;
+            position: absolute;
+            left: 50%;
+            top: 50%;
             width: 300px;
-            height: 400px; /* Görselin tahmini oranı */
+            height: 400px; 
+            margin-left: -150px;
+            margin-top: -200px;
             z-index: 1;
         }
 
-        /* Resmin Parçaları (JavaScript ile eklenecek) */
+        /* Resmin Parçaları (Evin yapı taşları) */
         .fragment {
             position: absolute;
             background-image: url('image_5dfd1c.jpg');
@@ -61,45 +64,27 @@
             /* 1. Aşama (Başlangıç): Dağınık, küçülmüş ve görünmez durumdalar */
             transform: translate(var(--start-x), var(--start-y)) rotate(var(--start-rot)) scale(0);
             opacity: 0;
-            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1s ease;
+            transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        opacity 1s ease,
+                        border-radius 1s ease,
+                        filter 1s ease;
         }
 
         /* 2. Aşama (Oluşma): Parçalar birleşip binayı kurar */
         .fragment.built {
             transform: translate(0, 0) rotate(0deg) scale(1);
             opacity: 1;
+            border-radius: 0;
+            filter: none;
         }
 
-        /* 3. Aşama (Yıkılma): Bina parçalanıp aşağı doğru düşer */
-        .fragment.collapsed {
-            transform: translate(var(--end-x), var(--end-y)) rotate(var(--end-rot)) scale(0.5);
-            opacity: 0;
-            transition: transform 1s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.8s ease-in;
-        }
-
-        /* ÇELİK GROUP Yazısı */
-        #intro-text {
-            position: absolute;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 900;
-            color: var(--primary-color);
-            text-align: center;
-            letter-spacing: 2px;
-            opacity: 0;
-            transform: scale(0.5) translateY(20px);
-            z-index: 2;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-shadow: 0px 4px 15px rgba(0,0,0,0.2);
-        }
-
-        #intro-text span {
-            color: var(--secondary-color);
-        }
-
-        /* Yazının belirmesi */
-        #intro-text.show {
+        /* 3. Aşama (Yazıya Dönüşme): Binanın parçaları şekil değiştirip harfleri oluşturur */
+        .fragment.text-shape {
+            transform: translate(var(--text-x), var(--text-y)) rotate(0deg) scale(0.4);
             opacity: 1;
-            transform: scale(1) translateY(0);
+            border-radius: 50%; /* Parçacık görünümü kazanmaları için yuvarlaklaşırlar */
+            /* Yazının okunabilir olması için parçaların rengini laciverte çalar hale getiriyoruz */
+            filter: contrast(1.2) brightness(0.5) sepia(1) hue-rotate(180deg);
         }
 
         /* ----- ANA İÇERİK (Başlangıçta gizli) ----- */
@@ -159,7 +144,6 @@
             margin: 0 auto;
         }
 
-        /* Tablet ve bilgisayarlar için yan yana dizilim */
         @media (min-width: 768px) {
             .project-grid {
                 grid-template-columns: 1fr 1fr;
@@ -188,7 +172,6 @@
     <!-- 1. GİRİŞ (INTRO) EKRANI -->
     <div id="intro-screen">
         <div id="image-container"></div>
-        <div id="intro-text">ÇELİK <span>GROUP</span></div>
     </div>
 
     <!-- 2. ANA SİTE İÇERİĞİ -->
@@ -210,19 +193,16 @@
         <section class="projects-section">
             <h2 style="color: #2c3e50; font-size: 2rem; margin-bottom: 30px;">Öne Çıkan Projelerimiz</h2>
             <div class="project-grid">
-                
                 <div class="project-card">
                     <h3 style="color: #f39c12; margin-top:0;">3+1 Daireler</h3>
                     <p>Geniş aileler için ferah, modern tasarımlı ve konforlu yaşam alanları.</p>
                     <p><strong>Durum:</strong> Hemen Teslim</p>
                 </div>
-
                 <div class="project-card">
                     <h3 style="color: #f39c12; margin-top:0;">2+1 Daireler</h3>
                     <p>Ergonomik mimarisiyle dikkat çeken, şehre yakın lüks daire seçenekleri.</p>
                     <p><strong>Durum:</strong> Hemen Teslim</p>
                 </div>
-
             </div>
         </section>
 
@@ -237,19 +217,51 @@
         document.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('image-container');
             const introScreen = document.getElementById('intro-screen');
-            const introText = document.getElementById('intro-text');
             const mainContent = document.getElementById('main-content');
             
-            // Resmi 10x12 grid şeklinde 120 parçaya bölelim
-            const cols = 10; 
-            const rows = 12;
+            // 1. Resmi yüksek çözünürlüklü 500 parçaya (20x25) bölüyoruz
+            const cols = 20; 
+            const rows = 25;
             const containerWidth = 300;
             const containerHeight = 400;
             const fragWidth = containerWidth / cols;
             const fragHeight = containerHeight / rows;
 
+            // 2. Parçaların gideceği yazının harf koordinatlarını çıkaracak Canvas Ayarları
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.min(window.innerWidth * 0.9, 800);
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            
+            ctx.fillStyle = "black";
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "center";
+            
+            // Mobil cihazlara göre font boyutunu otomatik ayarla
+            let fontSize = window.innerWidth < 600 ? 55 : 90;
+            ctx.font = `900 ${fontSize}px "Segoe UI", Arial, sans-serif`;
+            
+            // Metni Canvas'a yaz
+            ctx.fillText("ÇELİK", canvas.width / 2, canvas.height / 2 - (fontSize / 1.1));
+            ctx.fillText("GROUP", canvas.width / 2, canvas.height / 2 + (fontSize / 1.1));
+
+            // Metnin piksellerini (koordinatlarını) topla
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            const allTargets = [];
+            for (let y = 0; y < canvas.height; y += 3) {
+                for (let x = 0; x < canvas.width; x += 3) {
+                    // Yalnızca dolu olan (harfe denk gelen) pikselleri al
+                    if (imgData[(y * canvas.width + x) * 4 + 3] > 128) {
+                        allTargets.push({x, y});
+                    }
+                }
+            }
+            // Parçaların rastgele harflere dağılması için listeyi karıştır
+            allTargets.sort(() => Math.random() - 0.5);
+
             const fragments = [];
 
+            // 3. Resmin parçalarını oluşturma ve hedef koordinatlarını atama
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const frag = document.createElement('div');
@@ -259,26 +271,32 @@
                     frag.style.left = (j * fragWidth) + 'px';
                     frag.style.top = (i * fragHeight) + 'px';
                     
-                    // Resmin doğru parçasını arka plan olarak ayarla
                     frag.style.backgroundPosition = `-${j * fragWidth}px -${i * fragHeight}px`;
 
-                    // Başlangıç Pozisyonu (Dağınık ve havada süzülen parçalar)
-                    const startX = (Math.random() - 0.5) * (window.innerWidth * 1.2);
-                    const startY = (Math.random() - 0.5) * (window.innerHeight * 1.2);
+                    // İlk oluşma (Dağınık) durumu
+                    const startX = (Math.random() - 0.5) * (window.innerWidth * 1.5);
+                    const startY = (Math.random() - 0.5) * (window.innerHeight * 1.5);
                     const startRot = (Math.random() - 0.5) * 360;
-
-                    // Bitiş Pozisyonu (Yıkılma anında aşağıya/yanlara dökülen parçalar)
-                    const endX = (Math.random() - 0.5) * (window.innerWidth);
-                    const endY = (Math.random() * (window.innerHeight)) + 200; // Aşağı doğru dökülme
-                    const endRot = (Math.random() - 0.5) * 720;
                     
                     frag.style.setProperty('--start-x', `${startX}px`);
                     frag.style.setProperty('--start-y', `${startY}px`);
                     frag.style.setProperty('--start-rot', `${startRot}deg`);
                     
-                    frag.style.setProperty('--end-x', `${endX}px`);
-                    frag.style.setProperty('--end-y', `${endY}px`);
-                    frag.style.setProperty('--end-rot', `${endRot}deg`);
+                    // Yazı (Hedef) durumu hesaplaması - Evin merkezi ile Canvas merkezini dengeliyoruz
+                    const index = i * cols + j;
+                    const targetPixel = allTargets[index % allTargets.length];
+                    
+                    const canvasLeft = window.innerWidth / 2 - canvas.width / 2;
+                    const canvasTop = window.innerHeight / 2 - canvas.height / 2;
+                    
+                    const fragLeft = window.innerWidth / 2 - (containerWidth / 2) + (j * fragWidth);
+                    const fragTop = window.innerHeight / 2 - (containerHeight / 2) + (i * fragHeight);
+
+                    const deltaX = (canvasLeft + targetPixel.x) - (fragLeft + fragWidth / 2);
+                    const deltaY = (canvasTop + targetPixel.y) - (fragTop + fragHeight / 2);
+
+                    frag.style.setProperty('--text-x', `${deltaX}px`);
+                    frag.style.setProperty('--text-y', `${deltaY}px`);
 
                     container.appendChild(frag);
                     fragments.push(frag);
@@ -287,33 +305,29 @@
 
             // ---- ZAMANLAMA SENARYOSU (Toplam 6 Saniye) ---- //
 
-            // 1. Aşama: Sayfa yüklenir yüklenmez (100ms) parçalar birleşerek evi/binayı kursun
+            // 1. Aşama: Sayfa yüklenir yüklenmez (100ms) parçalar dışarıdan gelerek binayı kursun
             setTimeout(() => {
                 fragments.forEach(f => f.classList.add('built'));
             }, 100);
 
-            // 2. Aşama: 2.5 Saniye sonra kurulan ev/bina yıkılsın (çöksün)
+            // 2. Aşama: 2.5 Saniye sonra kurulan bina yıkılsın ve parçalar ÇELİK GROUP harflerini oluştursun
             setTimeout(() => {
                 fragments.forEach(f => {
                     f.classList.remove('built');
-                    f.classList.add('collapsed');
+                    f.classList.add('text-shape'); // Parçalar harf noktalarına uçuyor
                 });
             }, 2500);
 
-            // 3. Aşama: Bina yıkılırken (3.2 Saniye) ÇELİK GROUP yazısı ekranda belirsin
-            setTimeout(() => {
-                introText.classList.add('show');
-            }, 3200);
-
-            // 4. Aşama: 5.0 Saniye sonra giriş ekranı tamamen şeffaflaşmaya başlasın
+            // 3. Aşama: 5.0 Saniye sonra giriş ekranı yavaşça şeffaflaşmaya başlasın
             setTimeout(() => {
                 introScreen.style.opacity = '0';
             }, 5000);
 
-            // 5. Aşama: 6.0 Saniye dolduğunda giriş ekranı kaybolup mobil uyumlu site gelsin
+            // 4. Aşama: 6.0 Saniye dolduğunda giriş ekranı kaybolup ana site gelsin ve kaydırma açılsın
             setTimeout(() => {
                 introScreen.style.display = 'none';
                 mainContent.style.display = 'block';
+                document.body.style.overflow = 'auto';
                 
                 // Ana site Fade-in
                 setTimeout(() => {
